@@ -3,7 +3,6 @@ read.timecourse.rowformat <- function(name){
     
     # Get the data
     data <- read.table(name, sep="\t", header=TRUE, stringsAsFactors=FALSE)
-    print(str(data))
     
     # Now transform it to something that pylr and ggplot
     # can handle easily, i.e a data.frame
@@ -14,14 +13,14 @@ read.timecourse.rowformat <- function(name){
 
         # Get the parts of row
         roi_name <- row[1]
-        event <- row[2]
+        condition <- row[2]
         timecourse <- t(row[3:length(row)])
-        print(timecourse)
+
         # Recombined them, into a col-oriented, df-like, structure
         l <- length(timecourse)
         df_columns <- cbind(
                       rep(as.character(roi_name), l),
-                      rep(as.character(event), l),
+                      rep(as.character(condition), l),
                       1:l,
                       timecourse)
 
@@ -33,9 +32,9 @@ read.timecourse.rowformat <- function(name){
                                  row.names=NULL, stringsAsFactors=FALSE)
     
     # and setup the factors manually.
-    colnames(transformed) <- c("roi","event","index","timecourse")
+    colnames(transformed) <- c("roi","condition","index","timecourse")
     transformed$roi <- factor(transformed$roi)
-    transformed$event <- factor(transformed$event)
+    transformed$condition <- factor(transformed$condition)
     transformed$index <- factor(transformed$index)
     transformed$timecourse <- as.numeric(transformed$timecourse)
         ## This manual shit should not have been needed but R is
