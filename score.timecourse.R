@@ -15,7 +15,7 @@ score.timecourse <- function(data, score_name, score_f){
 
 # ------------------------------------
 # Define the atomic scoring functions
-# used by score.timecourse(), below
+# used by score.timecourse(), above
 score.var <- function(data) { var(data$timecourse) }
 score.mean <- function(data) { mean(data$timecourse) }
 score.peak <- function(data) { max(data$timecourse) }

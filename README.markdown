@@ -1,5 +1,11 @@
+# TODO 
+* Implement magic
+* Implement keep...
+* Find a way to add roi names to the plot facets
+* Correct errors in this doc
+
 # Install
-This is a simple set of R code for sorting, filtering, and plotting of fMRI HRF timecourses.  The goal is make visualizing various properties of the timecourses simple, while producing clean, yet dense, displays.
+A set of R functions for sorting, filtering, and plotting of fMRI HRF timecourses.  The goal is make visualizing various properties of the timecourses simple, while producing clean, yet dense, displays.
 
 It requires plyr (http://plyr.had.co.nz/) and ggplot2 (http://ggplot2.org/), and has only been tested on R >= v2.15.1 (http://www.r-project.org/) on MacOS 10.7.4.
 
