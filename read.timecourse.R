@@ -35,7 +35,7 @@ read.timecourse.rowformat <- function(name){
     colnames(transformed) <- c("roi","condition","index","timecourse")
     transformed$roi <- factor(transformed$roi)
     transformed$condition <- factor(transformed$condition)
-    transformed$index <- factor(transformed$index)
+    transformed$index <- as.numeric(transformed$index)
     transformed$timecourse <- as.numeric(transformed$timecourse)
         ## This manual shit should not have been needed but R is
         ## is being weird
