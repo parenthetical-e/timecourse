@@ -33,7 +33,7 @@ score.lag <- function(data) {
         ## index 1:length(...)
 }
 
-score.halfmax<- function(data) {
+score.halfmax <- function(data) {
     r_data <- data$timecourse
     halfmax <- max(r_data) / 2
     (1:length(r_data))[r_data >= halfmax][1]

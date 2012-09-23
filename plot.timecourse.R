@@ -1,9 +1,24 @@
 library("ggplot2")
 
-plot.timecourse.magic <- function(data){
-    p
-# TODO
+plot.timecourse.magic <- function(data, height=0, width=0){
+# Plot all all scores.
+
+    score_names <- c("var", "mean", "peak", "absdiff",
+                     "lag", "halfmax") 
+    score_fs <- c(score.var, score.mean, score.peak, score.absdiff,
+                  score.lag, score.halfmax)
+
+    for(ii in 1:length(score_names)){
+        print(score_names[[ii]])
+        scored <- score.timecourse(data, score_names[[ii]], score_fs[[ii]])
+        ranked <- rank.score(scored, TRUE)
+        data_ranked <- rank.timecourse(data, ranked, TRUE)
+        plot_name <- paste("timecourse", score_names[[ii]], sep="_")
+        plot.timecourse.combinedconds(data_ranked, plot_name,
+                                      height, width)
+    }
 }
+
 
 plot.timecourse.combinedconds <- function(ranked_data, name, height=0, width=0){
 # Plot the supplied ranked_data; height and width are in inches, unless
@@ -22,8 +37,8 @@ plot.timecourse.combinedconds <- function(ranked_data, name, height=0, width=0){
     p <- p + geom_line() 
     p <- p + facet_wrap(~data_ranks)
     p <- p + scale_fill_brewer(palette="Dark2")
-    p <- p + ylab("% Signal Change") + xlab("TR")
-    p <- p + theme_bw()
+    p <- p + ylab("% Signal Change") + xlab("TR") + labs(title=name)
+    #p <- p + theme_bw()
 
     # Plot, save, and clear the device
     plot(p)
