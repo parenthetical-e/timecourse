@@ -1,7 +1,8 @@
 # TODO 
-* Implement magic
-* Implement keep...
-* Find a way to add roi names to the plot facets
+
+* Implement filter.rank and filter.score ...
+* Several of the scores need inverting
+* There are still no plot titles; WTF ggplot, WTF.
 * Correct errors in this doc
 
 # Install
@@ -11,39 +12,46 @@ It requires plyr (http://plyr.had.co.nz/) and ggplot2 (http://ggplot2.org/), and
 
 To use download this code, executing the following in the directory where you want the code installed.
 
-	git ...
-	
-Then open an R console and, assuming your working directory is ./timecourses, type
+	git clone https://github.com/andsoandso/timecourse
 
-    load("plot.timecourse.R")
-	load("read.timecourse.R")
-	load("score.timecourse.R")
+Or you can manually go to https://github.com/andsoandso/timecourse and click on the ZIP button to get the most recent verison of the code.  Using git though will simplify updating the code in the future.
+	
+Then open an R console and, assuming your working directory is ./timecourse, type
+
+	source("read.timecourse.R")
+    source("plot.timecourse.R")
+	source("score.timecourse.R")
+	source("rank.timecourse.R")
+
+...In the future perhaps this will become a proper package, but for now you'll have to load everything manually.
 
 # Magic
 
-Below are the details for the functions that make the magic work.  However if you just want to plot the data using all available scores and plot kinds, run:
+Ff you just want to plot your data using all available scores and plot kinds, run:
 
-	plot.timecourse.magic('data.txt')
+	# read in the data, then plot it
+	data <- read.timecourse.rowformat('./test/roi_data_1.txt')
+	plot.timecourse.magic(data,1,18,14)  # e.g. criterion=1,height=12, width=12
 
-Where data.txt is a text file of the form:
+Where roi\_data\_1.txt is a text file of the form:
 
-	....
-
-Each of the magic plots is saved as pdf in the current working directory.  As an alternative, if there are many many ROIs you can plot only the top N percent using
+	roi		condition	1 	2 	 	...	n
+	1		fast 		0.1	0.3			-.1
 	
-	N <- 0.5 # The top 50%, for example; N should be between 0-1
-	plot.timecourse.limitedmagic('data.txt', N)
+Where the first row is a header, and each subsequent row is matching the corresponding data.  Thanks to plyr, very very large datasets can be handled.
+	
+Each of the magic plots is saved as pdf in the current working directory.  If you wish to keep only the top fraction of scores (which are described below), criterion can be set 0-1.  For example, if criterion=0.3 the top 30% of scores are plotted.
 
-For magical details, see details.
+To see how magic works keep reading.
 
 # Details
 
-If magic is too much or too little, here are the details on the worker functions.  They can be used alone just fine.
+If the magic is too much or too little, here are the details on the worker functions.  They can, mostly, be used alone just fine.
 
-After the laods above, a ls() will then reveal several useful functions; keep reading for the details.  The plotting functions are listed below.
+After the loads above, a ls() will then reveal several useful functions; keep reading for the details.  The plotting functions are listed below.
 	
 1. plot.timecourse.combinedconds
-2. plot.timecourse.separateconds
+2. [TODO] plot.timecourse.separateconds
 
 Each plotting function expects, one timecourse data_object, which is created as below.  The file in quotes is the test data set.
 
@@ -51,7 +59,13 @@ Each plotting function expects, one timecourse data_object, which is created as 
 
 Note: at current read.timecourse.* takes one data format, matching the format found in './test/roi\_data\_1.txt'.  This may change, if needed.
 
-They also expect one score_object, created using one of the score.timecourse.* functions. The * represents:
+They also expect one score_object, created using score.timecourse(...).  As an example, if you wanted to score using the peak height, this would work:
+
+	score_obj <- score.timecourse(data_obj, "peak", score.peak)
+
+As you can score.timecourse takes three arguments, a data_obj (from read.timecourse.rowformat), a name (i.e. "peak"), and a scoring function (making score.timecourse a metafunction).  
+
+The available scoring functions are:
 
 1. peak - the max value
 2. mean - the mean value
@@ -61,21 +75,31 @@ They also expect one score_object, created using one of the score.timecourse.* f
 6. halfmax - time to half the maximum (larger values imply steeper slopes)
 
 
-For example, if you wanted to score using the peak height, this would work:
+Note: If you have other scores in mind, ones not listed above, do share them. This code is designed to allow new scores to be added easily.
 
-	score_obj <- score.timecourse.peak(data_obj, score_obj)
+Once you have scores, they need to be ranked.  This is accomplished with
 
-If you have other scores in mind, ones not listed above, do share them....
+	rank_object <- rank.score(scores, rank_means=TRUE)
+	
+And these ranks are then applied to the timecourse data
 
-If there are too many ROIs, so you want to drop some rows from data\_obj and score\_obj after scoring, run
+	data_ranked <- rank.timecourse(data_obj, rank_object, rank_means=TRUE)
+
+In both cases above, rank_means is set to TRUE, as such the scores for any conditions (for each ROI) are averaged prior to ranking.
+
+If there are too many ROIs, so you want to drop some based on rank do the below.  The criterion is between 0-1 (inclusive) and represents the top fraction of scores to keep, e.g. 0.1 would keep the top 10%.
 
 	criterion <- 0.1
-	keepers <- keep.timecourse(data_obj, score_obj, criterion)
+	keepers <- filter.rank(data_ranked, criterion)
 
-Where criterion is between 0-1 (inclusive) and represents the top fraction of scores to keep, e.g. 0.1 would keep the top 10%.  However as R only allows one return variable, e.g. 'keepers', so we return a list.  We need to split it up.  This is awkward, sorry.
+	# Or as any rank-containing object will work
+	keepers <- filter.rank(ranked, criterion)
 
-	kept_data_obj <- keepers[[1]]
-	kept_score_obj <- keepers[[2]]
+Or you can filter the scores.  However unlike the rank filter you must specify the real valued threshold you want to use.
+
+	# Assuming were working with peak scores, 0.5 (% signal change)
+	# might be a reasonable choice
+	top_scores <- filter.scores(score_obj, threshold)
 	
 So to then plot our (optionally) filtered data, we:
 

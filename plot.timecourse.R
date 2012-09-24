@@ -1,6 +1,6 @@
 library("ggplot2")
 
-plot.timecourse.magic <- function(data, height=0, width=0){
+plot.timecourse.magic <- function(data, criterion=1, height=0, width=0){
 # Plot all all scores.
 
     score_names <- c("var", "mean", "peak", "absdiff",
@@ -10,9 +10,15 @@ plot.timecourse.magic <- function(data, height=0, width=0){
 
     for(ii in 1:length(score_names)){
         print(score_names[[ii]])
+        
         scored <- score.timecourse(data, score_names[[ii]], score_fs[[ii]])
         ranked <- rank.score(scored, TRUE)
         data_ranked <- rank.timecourse(data, ranked, TRUE)
+        
+        if(criterion < 1){
+            data_ranked <- filter.ranked(data_ranked, criterion)
+        }
+        
         plot_name <- paste("timecourse", score_names[[ii]], sep="_")
         plot.timecourse.combinedconds(data_ranked, plot_name,
                                       height, width)
@@ -35,10 +41,10 @@ plot.timecourse.combinedconds <- function(ranked_data, name, height=0, width=0){
     p <- ggplot(data=ranked_data,
                 aes(x=index, y=timecourse, colour=condition))
     p <- p + geom_line() 
-    p <- p + facet_wrap(~data_ranks)
+    p <- p + facet_wrap(~ data_ranks + roi)
     p <- p + scale_fill_brewer(palette="Dark2")
-    p <- p + ylab("% Signal Change") + xlab("TR") + labs(title=name)
-    #p <- p + theme_bw()
+    p <- p + ylab("% Signal Change") + xlab("TR") + opts(title=name)
+    p <- p + theme_bw()
 
     # Plot, save, and clear the device
     plot(p)
