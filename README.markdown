@@ -8,26 +8,23 @@
 # Install
 A set of R functions for sorting, filtering, and plotting of fMRI HRF timecourses.  The goal is make visualizing various properties of the timecourses simple, while producing clean, yet dense, displays.
 
-It requires plyr (http://plyr.had.co.nz/) and ggplot2 (http://ggplot2.org/), and has only been tested on R >= v2.15.1 (http://www.r-project.org/) on MacOS 10.7.4.
+The functions require plyr (http://plyr.had.co.nz/) and ggplot2 (http://ggplot2.org/), and have only been tested on R >= v2.15.1 (http://www.r-project.org/) on MacOS 10.7.4.
 
 To use download this code, executing the following in the directory where you want the code installed.
 
 	git clone https://github.com/andsoandso/timecourse
 
-Or you can manually go to https://github.com/andsoandso/timecourse and click on the ZIP button to get the most recent verison of the code.  Using git though will simplify updating the code in the future.
+Or you can manually go to https://github.com/andsoandso/timecourse and click on the ZIP button to get the most recent version of the code.  Using git though will simplify updating the code in the future.
 	
 Then open an R console and, assuming your working directory is ./timecourse, type
 
-	source("read.timecourse.R")
-    source("plot.timecourse.R")
-	source("score.timecourse.R")
-	source("rank.timecourse.R")
+	source("timecourse.R")
 
 ...In the future perhaps this will become a proper package, but for now you'll have to load everything manually.
 
 # Magic
 
-Ff you just want to plot your data using all available scores and plot kinds, run:
+If you just want to plot your data using all available scores and plot kinds, run:
 
 	# read in the data, then plot it
 	data <- read.timecourse.rowformat('./test/roi_data_1.txt')
@@ -38,8 +35,8 @@ Where roi\_data\_1.txt is a text file of the form:
 	roi		condition	1 	2 	 	...	n
 	1		fast 		0.1	0.3			-.1
 	
-Where the first row is a header, and each subsequent row is matching the corresponding data.  Thanks to plyr, very very large datasets can be handled.
-	
+Where the first row is a header, and each subsequent row matches the corresponding data.  Thanks to plyr, very very large datasets can be handled relatively easily.
+
 Each of the magic plots is saved as pdf in the current working directory.  If you wish to keep only the top fraction of scores (which are described below), criterion can be set 0-1.  For example, if criterion=0.3 the top 30% of scores are plotted.
 
 To see how magic works keep reading.
@@ -67,13 +64,12 @@ As you can score.timecourse takes three arguments, a data_obj (from read.timecou
 
 The available scoring functions are:
 
-1. peak - the max value
-2. mean - the mean value
-3. var - the variance
-4. absdiff - the absolute difference between the range value
-5. lag - time to max value
-6. halfmax - time to half the maximum (larger values imply steeper slopes)
-
+1. score.peak - the max value
+2. score.mean - the mean value
+3. score.var - the variance
+4. score.absdiff - the absolute difference between the range value
+5. score.lag - time to max value
+6. score.halfmax - time to half the maximum (larger values imply steeper slopes)
 
 Note: If you have other scores in mind, ones not listed above, do share them. This code is designed to allow new scores to be added easily.
 
@@ -99,10 +95,6 @@ Or you can filter the scores.  However unlike the rank filter you must specify t
 
 	# Assuming were working with peak scores, 0.5 (% signal change)
 	# might be a reasonable choice
-	top_scores <- filter.scores(score_obj, threshold)
-	
-So to then plot our (optionally) filtered data, we:
+	threshold <- 0.5
 
-	plot.timecourse.combinedconds(data_obj, score_obj)
-	
-Which produces, for example, 'combined_time.pdf'; see ./test
+Now explain how to use these and the direct plot methods in general
