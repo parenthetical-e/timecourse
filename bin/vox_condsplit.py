@@ -3,7 +3,7 @@
 progamatically used.  New files are created for every condition, and some 
 fidl specific metadata is lost. 
 
-To run from the command line:
+To run from the command line (there are no options or flags):
 voxval_condsplit <filename1> <filename2> ... """
 import sys
 import re

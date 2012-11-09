@@ -1,9 +1,9 @@
 #! /usr/local/bin/python
 """ Reformats *_vox.txt files from fidl into a tabular format easily 
 progamatically used.  A column is added to the left for each condition found
-in the *_vox.txt file. 
+in the *_vox.txt file.  Some fidl metadata is lost. 
 
-To run from the command line:
+To run from the command line (there are no options or flags):
 voxval_reformat <filename1> <filename2> ... """
 import sys
 import re
@@ -31,11 +31,12 @@ def reformat(filename):
     out_nameonly = '_'.join(['conds', nameonly])
     out_filename = os.path.join(path, out_nameonly)
     
+    # Open the out file.
+    fout = open(out_filename,'w')
+        
     # Open the file to parse and 
     # start iterating over it.
-    fout = open(out_filename,'w')
     fin = open(filename, 'r')
-
     for line in iter(fin):
         # Skip empty lines
         if not line.strip():
