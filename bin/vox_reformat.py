@@ -28,7 +28,7 @@ def reformat(filename):
     
     # Create the out_filename 
     path, nameonly = os.path.split(filename)
-    out_nameonly = '_'.join(['cond', nameonly])
+    out_nameonly = '_'.join(['conds', nameonly])
     out_filename = os.path.join(path, out_nameonly)
     
     # Open the file to parse and 
