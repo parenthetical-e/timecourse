@@ -43,7 +43,7 @@ def reformat(filename):
             continue
         
         # Are there any characters?
-        elif re.match('[a-zA-z]', line):
+        elif re.match('[A-Z]', line):
             # Do they say anything interesting?
             if re.match('TIMECOURSE', line):
                 # Parse the line to extract the cond name

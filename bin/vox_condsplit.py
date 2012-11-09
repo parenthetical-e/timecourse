@@ -36,7 +36,7 @@ def reformat(filename):
             continue
         
         # Are there any characters?
-        elif re.match('[a-zA-z]', line):
+        elif re.match('[A-Z]', line):
             
             # Do they say anything interesting?
             if re.match('TIMECOURSE', line):
@@ -51,12 +51,13 @@ def reformat(filename):
                 path, nameonly = os.path.split(filename)
                 out_nameonly ='_'.join([cond_name, nameonly])
                 out_filename = os.path.join(path, out_nameonly)
-                    ## strip the path if present
+
                 try:
                     fout.close()
                     fout = open(out_filename,'w')
                 except AttributeError:
                     fout = open(out_filename,'w')
+                        ## Init on error
 
                 continue
         # If it is not character data 
