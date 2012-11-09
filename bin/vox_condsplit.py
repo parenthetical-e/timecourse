@@ -3,6 +3,10 @@
 progamatically used.  New files are created for every condition, and some 
 fidl specific metadata is lost. 
 
+NOTE: If you have levels, or any character data in the timecourse data proper, 
+it must be in lower case ONLY.  Uppercase characters outside of the fidl 
+metadata/formatting will break the script.
+
 To run from the command line (there are no options or flags):
 voxval_condsplit <filename1> <filename2> ... """
 import sys
