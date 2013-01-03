@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Timecourse by andsoandso</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Timecourse</h1>
+        <p>Let's you cleanly, yet densely, visualize fMRI timecourses in R.</p>
+
+        <p class="view"><a href="https://github.com/andsoandso/timecourse">View the Project on GitHub <small>andsoandso/timecourse</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/andsoandso/timecourse/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/andsoandso/timecourse/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/andsoandso/timecourse">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>TODO</h1>
+
+<ul>
+<li>Implement filter.rank and filter.score ...</li>
+<li>Several of the scores need inverting</li>
+<li>There are still no plot titles; WTF ggplot, WTF.</li>
+<li>Correct errors in this doc</li>
+</ul><h1>Install</h1>
+
+<p>A set of R functions for sorting, filtering, and plotting of fMRI HRF timecourses.  The goal is make visualizing various properties of the timecourses simple, while producing clean, yet dense, displays.</p>
+
+<p>The functions require plyr (<a href="http://plyr.had.co.nz/">http://plyr.had.co.nz/</a>) and ggplot2 (<a href="http://ggplot2.org/">http://ggplot2.org/</a>), and have only been tested on R &gt;= v2.15.1 (<a href="http://www.r-project.org/">http://www.r-project.org/</a>) on MacOS 10.7.4.</p>
+
+<p>To use download this code, executing the following in the directory where you want the code installed.</p>
+
+<pre><code>git clone https://github.com/andsoandso/timecourse
+</code></pre>
+
+<p>Or you can manually go to <a href="https://github.com/andsoandso/timecourse">https://github.com/andsoandso/timecourse</a> and click on the ZIP button to get the most recent version of the code.  Using git though will simplify updating the code in the future.</p>
+
+<p>Then open an R console and, assuming your working directory is ./timecourse, type</p>
+
+<pre><code>source("timecourse.R")
+</code></pre>
+
+<p>...In the future perhaps this will become a proper package, but for now you'll have to load everything manually.</p>
+
+<h1>Magic</h1>
+
+<p>If you just want to plot your data using all available scores and plot kinds, run:</p>
+
+<pre><code># read in the data, then plot it
+data &lt;- read.timecourse.rowformat('./test/roi_data_1.txt')
+plot.timecourse.magic(data,1,18,14)  # e.g. criterion=1,height=12, width=12
+</code></pre>
+
+<p>Where roi_data_1.txt is a text file of the form:</p>
+
+<pre><code>roi     condition   1   2       ... n
+1       fast        0.1 0.3         -.1
+</code></pre>
+
+<p>Where the first row is a header, and each subsequent row matches the corresponding data.  Thanks to plyr, very very large datasets can be handled relatively easily.</p>
+
+<p>Each of the magic plots is saved as pdf in the current working directory.  If you wish to keep only the top fraction of scores (which are described below), criterion can be set 0-1.  For example, if criterion=0.3 the top 30% of scores are plotted.</p>
+
+<p>To see how magic works keep reading.</p>
+
+<h1>Details</h1>
+
+<p>If the magic is too much or too little, here are the details on the worker functions.  They can, mostly, be used alone just fine.</p>
+
+<p>After the loads above, a ls() will then reveal several useful functions; keep reading for the details.  The plotting functions are listed below.</p>
+
+<ol>
+<li>plot.timecourse.combinedconds</li>
+<li>[TODO] plot.timecourse.separateconds</li>
+</ol><p>Each plotting function expects, one timecourse data_object, which is created as below.  The file in quotes is the test data set.</p>
+
+<pre><code>data_obj &lt;- read.timecourse.rowformat('./test/roi_data_1.txt')
+</code></pre>
+
+<p>Note: at current read.timecourse.* takes one data format, matching the format found in './test/roi_data_1.txt'.  This may change, if needed.</p>
+
+<p>They also expect one score_object, created using score.timecourse(...).  As an example, if you wanted to score using the peak height, this would work:</p>
+
+<pre><code>score_obj &lt;- score.timecourse(data_obj, "peak", score.peak)
+</code></pre>
+
+<p>As you can score.timecourse takes three arguments, a data_obj (from read.timecourse.rowformat), a name (i.e. "peak"), and a scoring function (making score.timecourse a metafunction).  </p>
+
+<p>The available scoring functions are:</p>
+
+<ol>
+<li>score.peak - the max value</li>
+<li>score.mean - the mean value</li>
+<li>score.var - the variance</li>
+<li>score.absdiff - the absolute difference between the range value</li>
+<li>score.lag - time to max value</li>
+<li>score.halfmax - time to half the maximum (larger values imply steeper slopes)</li>
+</ol><p>Note: If you have other scores in mind, ones not listed above, do share them. This code is designed to allow new scores to be added easily.</p>
+
+<p>Once you have scores, they need to be ranked.  This is accomplished with</p>
+
+<pre><code>rank_object &lt;- rank.score(scores, rank_means=TRUE)
+</code></pre>
+
+<p>And these ranks are then applied to the timecourse data</p>
+
+<pre><code>data_ranked &lt;- rank.timecourse(data_obj, rank_object, rank_means=TRUE)
+</code></pre>
+
+<p>In both cases above, rank_means is set to TRUE, as such the scores for any conditions (for each ROI) are averaged prior to ranking.</p>
+
+<p>If there are too many ROIs, so you want to drop some based on rank do the below.  The criterion is between 0-1 (inclusive) and represents the top fraction of scores to keep, e.g. 0.1 would keep the top 10%.</p>
+
+<pre><code>criterion &lt;- 0.1
+keepers &lt;- filter.rank(data_ranked, criterion)
+
+# Or as any rank-containing object will work
+keepers &lt;- filter.rank(ranked, criterion)
+</code></pre>
+
+<p>Or you can filter the scores.  However unlike the rank filter you must specify the real valued threshold you want to use.</p>
+
+<pre><code># Assuming were working with peak scores, 0.5 (% signal change)
+# might be a reasonable choice
+threshold &lt;- 0.5
+</code></pre>
+
+<p>Now explain how to use these and the direct plot methods in general</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/andsoandso">andsoandso</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
