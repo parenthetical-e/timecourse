@@ -26,10 +26,11 @@ Then open an R console and, assuming your working directory is ./timecourse, typ
 
 If you just want to plot your data using all available scores and plot kinds, run:
 
-	# read in the data, then plot it
-	data <- read.timecourse.rowformat('./test/roi_data_1.txt')
-	plot.timecourse.magic(data,1,18,14)  # e.g. criterion=1,height=12, width=12
-
+	# read in the data, then plot it (assumeing we started in ./timecourse)
+	setwd("./test")  ## Move to the test folder
+	tc <- read.timecourse.rowformat('roi_data_1.txt')
+	plot.timecourse.magic(tc,1,18,14)  # e.g. criterion=1,height=12, width=12)
+	
 Where roi\_data\_1.txt is a text file of the form:
 
 	roi		condition	1 	2 	 	...	n
@@ -54,7 +55,7 @@ Each plotting function expects, one timecourse data_object, which is created as 
 
 	data_obj <- read.timecourse.rowformat('./test/roi_data_1.txt')
 
-Note: at current read.timecourse.* takes one data format, matching the format found in './test/roi\_data\_1.txt'.  This may change, if needed.
+Note: at current read.timecourse.rowformat.* takes one data format, matching the format found in './test/roi\_data\_1.txt'.  This may change, if needed.
 
 They also expect one score_object, created using score.timecourse(...).  As an example, if you wanted to score using the peak height, this would work:
 
