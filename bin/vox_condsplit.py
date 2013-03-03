@@ -25,7 +25,7 @@ def main(args):
 
 def reformat(filename):
     """ Reformats <filename> a *_vox.txt from fidl to a format
-    easily imported as a table in R. """
+    easily imported as a table in R or python or whatever. """
     
     # Init globals
     fout = None

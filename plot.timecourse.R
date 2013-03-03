@@ -1,5 +1,6 @@
 library("ggplot2")
 
+
 plot.timecourse.magic <- function(data, criterion=1, height=0, width=0){
 # Plot all all scores.
 

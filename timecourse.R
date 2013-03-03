@@ -1,4 +1,4 @@
-# Just a script that loads the scripts; what a ghetto package this is?
+# A script that loads the scripts; ghetto package is ghetto.
 
 source("read.timecourse.R")
 source("plot.timecourse.R")

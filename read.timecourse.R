@@ -51,13 +51,26 @@
 	skip
 }
 
+# TODO want to have 2 strcutures for the data, instead of the one used here.
+# The first, for scoring, ranking and clustering should be
+# <roi> <cond> <data> (or similar)
+# Where data is a scalar or a timecourse
+# The second should match the format used for plotting of timecourse
+# data.
+# <TR_index> <cond> <roi> <data>
+# the difference is the data is explicitily indexed by TR_index
+# rather that each bieng its own column as above.
+# NEED TO WITE A EFFICIENT (TRANSPOSE BASED?) WAY TO CONVERT BETWEEN
+# THESE.
+# Almost all the real work will be done in the first, the later is to satisfy
+# ggplot2.
 
 read.timecourse <- function(name, roicols=2:4, condcols=1, timecols=5:20, header=FALSE){
 # Read in the <name>ed data file.
     
     # Get the data
 	print("Initial read.")
-    data <- read.table(name, sep="\t", header=header, stringsAsFactors=FALSE)
+	data <- read.table(name, sep="\t", header=header, stringsAsFactors=FALSE)
     
     # Now transform it to something that pylr and ggplot
     # can handle easily, i.e a data.frame
@@ -111,16 +124,19 @@ read.timecourse <- function(name, roicols=2:4, condcols=1, timecols=5:20, header
 }
 
 
-read.timecourses.par(names, roicols=2:4, condcols=1, timecols=5:20, header=FALSE) {
-	library(plyr)
-	library(doMC)
+read.timecourses.par <-function(names, roicols=2:4, condcols=1, timecols=5:20, header=FALSE) {
+	# Read in each ofthe names, each in parallel if possible.
+	# Returns all the named data in a list
+	library("plyr")
+	library("doMC")
 	
 	# Init the parallalization backend
+	# from doMC
 	registerDoMC()
 	
-	# Closure over read.timecourse()
+	# Closure on read.timecourse()
 	reader <- function(name){
-		read.timecourse(name, roicols, condcols, timecourse)
+		read.timecourse(name, roicols, condcols, timecourse, header)
 	}
 
 	# Now read in, in parallel.
