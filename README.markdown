@@ -46,7 +46,7 @@ Or if you want to exclude some of the timecourse data prior to plotting use the 
 	crit <- 0.1
 	ftc <- filter.timecourse(tc, crit, score.peak, filter.leq)
 
-As you can see filter.timecourse takes 4 arguments - some timecourse data, a criterion, a scoring function, a filtering function.  See filter.timecourse.R for details on the filter functions (in short, they return TRUE/FALSE based on crit).
+As you can see filter.timecourse takes 4 arguments - some timecourse data, a criterion, a scoring function (see score.timecourse.R), a filtering function (filter.timecourse.R; Filter functions return TRUE/FALSE based on crit).
 
 Each of the magic plots is saved as pdf in the current working directory.  If you wish to keep only the top fraction of scores (which are described below), criterion can be set 0-1.  For example, if criterion=0.3 the top 30% of scores are plotted.
 

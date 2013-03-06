@@ -9,6 +9,7 @@ filter.timecourse <- function(data, crit, score_f, filter_f){
 # ------------------------------------
 # Define the atomic filtering functions
 # used by filter.timecourse()
+# - Filter functions return TRUE/FALSE based on crit.
 filter.leq <- function(scores, crit){
 	# Return TRUE if score is less than or equal to crit
 	# otherwise FALSE
