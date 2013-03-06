@@ -1,9 +1,7 @@
-library("plyr")
+require("plyr")
 
 score.timecourse <- function(data, score_name, score_f){
 # Score the timecourse in the <data> object, from read.timecourse
-# Note: score.timecourse is only funciton in this file intended 
-# for public use
 
     # Use the score_f to create the scores
     # considering each condition in each roi separatly
@@ -12,10 +10,9 @@ score.timecourse <- function(data, score_name, score_f){
     scores
 }
 
-
 # ------------------------------------
 # Define the atomic scoring functions
-# used by score.timecourse(), above
+# used by score.timecourse()
 score.var <- function(data) { var(data$timecourse) }
 
 score.mean <- function(data) { mean(data$timecourse) }
@@ -45,4 +42,6 @@ score.halfmax <- function(data) {
         ## index 1:length(...), then grabbing the
         ## first element
 }
+
+
 

@@ -35,8 +35,18 @@ Where roi\_data\_1.txt is a text file of the form:
 
 	roi		condition	1 	2 	 	...	n
 	1		fast 		0.1	0.3			-.1
-	
+
+
 Where the first row is a header, and each subsequent row matches the corresponding data.  Thanks to plyr, very very large datasets can be handled relatively easily.
+
+Or if you want to exclude some of the timecourse data prior to plotting use the filter.timecourse() function, for example:
+
+	# Filter (remove) timecourses if their max value (found using score.peak) 
+	# is less than or equal to (leq) the crit.
+	crit <- 0.1
+	ftc <- filter.timecourse(tc, crit, score.peak, filter.leq)
+
+As you can see filter.timecourse takes 4 arguments - some timecourse data, a criterion, a scoring function, a filtering function.  See filter.timecourse.R for details on the filter functions (in short, they return TRUE/FALSE based on crit).
 
 Each of the magic plots is saved as pdf in the current working directory.  If you wish to keep only the top fraction of scores (which are described below), criterion can be set 0-1.  For example, if criterion=0.3 the top 30% of scores are plotted.
 
